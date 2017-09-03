@@ -2,11 +2,10 @@ import React from 'react';
 import { BrowserRouter, Route, Switch } from 'react-router-dom';
 
 import AppContainer from '../common/components/AppContainer';
-import Title from '../common/components/Title';
 import Article from '../common/components/Article';
-import Footer from '../common/components/Footer';
 
 import SearchHeader from './components/SearchHeader';
+import Sitemap from './components/Sitemap';
 
 import Search from './screens/Search';
 import Films from './screens/Films';
@@ -38,11 +37,7 @@ class App extends React.Component {
               <Route path="/vehicles" component={Vehicles} />
               <Route path="/:errorPage" component={Error} />
             </Switch>
-            <Footer>
-              <Title>
-                SWAPI Footer
-              </Title>
-            </Footer>
+            <Sitemap />
           </Article>
         </AppContainer>
       </BrowserRouter>

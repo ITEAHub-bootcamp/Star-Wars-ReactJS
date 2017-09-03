@@ -33,7 +33,12 @@ module.exports = {
       ],
     }, {
       test: /\.(ico|jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2)(\?.*)?$/,
-      use: 'file-loader',
+      use: [{
+        loader: 'file-loader',
+        options: {
+          publicPath: '/',
+        },
+      }],
     }],
   },
   plugins: [
@@ -48,6 +53,7 @@ module.exports = {
   devServer: {
     host: 'localhost',
     port: 3000,
+    publicPath: '/',
     historyApiFallback: true,
     hot: true,
   },

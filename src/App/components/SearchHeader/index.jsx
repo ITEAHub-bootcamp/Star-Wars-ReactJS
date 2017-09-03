@@ -23,7 +23,7 @@ class SearchHeader extends React.Component {
     };
 
     this.state = {
-      currentResourceType: 'people',
+      currentResourceType: '',
       resourceTypes: [],
     };
 
@@ -34,7 +34,14 @@ class SearchHeader extends React.Component {
     window
       .fetch('https://swapi.co/api/')
       .then(res => res.json())
-      .then(json => this.setState({ resourceTypes: Object.keys(json) }));
+      .then((json) => {
+        const resourceTypes = Object.keys(json);
+
+        this.setState({
+          resourceTypes,
+          currentResourceType: resourceTypes[0] || '',
+        });
+      });
   }
 
   onHeaderSearch(e) {
@@ -44,6 +51,8 @@ class SearchHeader extends React.Component {
   }
 
   setCurrentResourceType(type) {
+    if (!type) return;
+
     const { currentSearchQuery } = this.private;
     this.props.history.replace(`/search/${type}/${currentSearchQuery || ' '}`);
 
@@ -79,6 +88,9 @@ class SearchHeader extends React.Component {
 
   search(searchQuery) {
     const { currentResourceType } = this.state;
+
+    if (!currentResourceType) return;
+
     this.props.history.replace(`/search/${currentResourceType}/${searchQuery || ' '}`);
 
     this.private.currentSearchQuery = searchQuery;
@@ -88,8 +100,8 @@ class SearchHeader extends React.Component {
 
   render() {
     return (
-      <Header>
-        <Anchor>
+      <Header className="swapi-search-header">
+        <Anchor path={{ path: '/', index: true }}>
           <Heading>
             SWAPI
           </Heading>
@@ -112,9 +124,7 @@ SearchHeader.propTypes = {
 };
 
 SearchHeader.defaultProps = {
-  onResult(type, query) {
-    console.log(type, query); // eslint-disable-line no-console
-  },
+  onResult() {},
 };
 
 export default withRouter(SearchHeader);
