@@ -2,7 +2,9 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { AppContainer } from 'react-hot-loader';
 
-import App from './App';
+import 'whatwg-fetch';
+
+import ApplicationContainer from './App';
 
 function render(Component) {
   ReactDOM.render(
@@ -13,10 +15,10 @@ function render(Component) {
   );
 }
 
-render(App);
+render(ApplicationContainer);
 
 if (module.hot) {
   module.hot.accept('./App', () => {
-    render(App);
+    render(ApplicationContainer);
   });
 }
