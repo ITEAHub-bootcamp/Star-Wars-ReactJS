@@ -26,20 +26,22 @@ class ApplicationContainer extends React.PureComponent {
       <App centered={false}>
         <Article>
           <BrowserRouter>
-            <SearchHeader />
-            <Switch>
-              <Route exact path="/" component={Home} />
-              <Route path="/search/:type/:query" component={Search} />
-              <Route path="/films" component={Films} />
-              <Route exact path="/people" component={People} />
-              <Route path="/planets" component={Planets} />
-              <Route path="/species" component={Species} />
-              <Route path="/starships" component={Starships} />
-              <Route path="/vehicles" component={Vehicles} />
-              <Route path="/people/:id" component={Person} />
-              <Route path="/:error" component={ErrorPage} />
-            </Switch>
-            <PageFooter />
+            <div>
+              <SearchHeader />
+              <Switch>
+                <Route exact path="/" component={Home} />
+                <Route path="/search/:type/:query" component={Search} />
+                <Route path="/films" component={Films} />
+                <Route exact path="/people" component={People} />
+                <Route path="/planets" component={Planets} />
+                <Route path="/species" component={Species} />
+                <Route path="/starships" component={Starships} />
+                <Route path="/vehicles" component={Vehicles} />
+                <Route path="/people/:id" component={Person} />
+                <Route path="/:error" component={ErrorPage} />
+              </Switch>
+              <PageFooter />
+            </div>
           </BrowserRouter>
         </Article>
       </App>
