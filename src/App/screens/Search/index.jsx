@@ -3,16 +3,13 @@ import React from 'react';
 import Tiles from 'grommet/components/Tiles';
 import Tile from 'grommet/components/Tile';
 import Card from 'grommet/components/Card';
-import Hero from 'grommet/components/Hero';
-import Image from 'grommet/components/Image';
 import Box from 'grommet/components/Box';
 import Value from 'grommet/components/Value';
 import Meter from 'grommet/components/Meter';
 import Anchor from 'grommet/components/Anchor';
-import Heading from 'grommet/components/Heading';
+import ErrorPage from '../../components/ErrorPage';
 
 import imgBg from './assets/wpid-starwars_logo.jpg';
-import errorBg from './assets/error-404.jpg';
 
 class Search extends React.Component {
   constructor(...args) {
@@ -24,6 +21,7 @@ class Search extends React.Component {
       searchResult: {},
       loadedItemsCounter: 0,
       totalItemsCounter: 0,
+      errorMsg: '',
     };
     this.apiUrl = 'https://swapi.co/api';
     this.loadMoreResults = this.loadMoreResults.bind(this);
@@ -49,6 +47,10 @@ class Search extends React.Component {
     });
     const matchParams = this.props.match.params;
     this.searchData(this.apiUrl, matchParams.type, matchParams.query);
+  }
+
+  get searchErrorMsg() {
+    return `No ${this.state.searchType} have been found...`;
   }
 
   get tile() {
@@ -84,39 +86,7 @@ class Search extends React.Component {
         </Box>
       </div>
       :
-      <Hero
-        size="large"
-        background={<Image
-          src={errorBg}
-          fit="cover"
-          full
-        />}
-        backgroundColorIndex="dark"
-      >
-        <Box
-          direction="row"
-          justify="center"
-          align="center"
-        >
-          <Box
-            basis="1/2"
-            align="end"
-            pad="medium"
-          />
-          <Box
-            basis="1/2"
-            align="start"
-            pad="medium"
-          >
-            <Heading
-              margin="none"
-              strong
-            >
-              No {this.state.searchType} have been found...
-            </Heading>
-          </Box>
-        </Box>
-      </Hero>;
+      <ErrorPage textToDisplay={this.searchErrorMsg} />;
   }
 
   searchData(url, type, query) {

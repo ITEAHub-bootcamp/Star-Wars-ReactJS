@@ -48,12 +48,13 @@ class Person extends React.PureComponent {
       window
         .fetch(filmUrl)
         .then(response => response.json())
-        .then(json => this.setState({ filmsList: this.state.filmsList.concat([json]) })),
+        .then(json => this.setState({
+          filmsList: this.state.filmsList.concat([json]),
+        })),
     );
   }
 
   get film() {
-    console.log(this.state.filmsList);
     return this.state.filmsList && this.state.filmsList.length ?
       this.state.filmsList.map(film =>
         (<ListItem
@@ -134,7 +135,7 @@ class Person extends React.PureComponent {
                   {this.film}
                 </List>
               </Card>
-            </Tile>)
+            </Tile>
           </Tiles>
         </Hero>
       </Section>

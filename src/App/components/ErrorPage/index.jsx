@@ -1,5 +1,5 @@
 import React from 'react';
-
+import PropTypes from 'prop-types';
 import Hero from 'grommet/components/Hero';
 import Image from 'grommet/components/Image';
 import Box from 'grommet/components/Box';
@@ -11,6 +11,7 @@ class ErrorPage extends React.Component {
   render() {
     return (
       <Hero
+        size="large"
         background={<Image
           src={errorBg}
           fit="cover"
@@ -37,7 +38,7 @@ class ErrorPage extends React.Component {
             <Heading
               margin="none"
             >
-              Sample Heading
+              {this.props.textToDisplay}
             </Heading>
           </Box>
         </Box>
@@ -45,5 +46,13 @@ class ErrorPage extends React.Component {
     );
   }
 }
+
+ErrorPage.defaultProps = {
+  textToDisplay: 'Some error has occured',
+};
+
+ErrorPage.propTypes = {
+  textToDisplay: PropTypes.string,
+};
 
 export default ErrorPage;
