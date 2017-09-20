@@ -1,5 +1,7 @@
 import React from 'react';
+import { connect } from 'react-redux';
 
+import Section from 'grommet/components/Section';
 import Tiles from 'grommet/components/Tiles';
 import Tile from 'grommet/components/Tile';
 import Card from 'grommet/components/Card';
@@ -9,115 +11,105 @@ import Meter from 'grommet/components/Meter';
 import Anchor from 'grommet/components/Anchor';
 import ErrorPage from '../../components/ErrorPage';
 
+import { searchSwapi, loadNextResults } from '../../actions/searchResults';
+
 import imgBg from './assets/wpid-starwars_logo.jpg';
 
 class Search extends React.Component {
-  constructor(...args) {
-    super(...args);
-
-    this.state = {
-      searchType: this.props.match.params.type,
-      searchQuery: this.props.match.params.query,
-      searchResult: {},
-      loadedItemsCounter: 0,
-      totalItemsCounter: 0,
-      errorMsg: '',
-    };
-    this.apiUrl = 'https://swapi.co/api';
-    this.loadMoreResults = this.loadMoreResults.bind(this);
-  }
 
   componentDidMount() {
-    const state = this.state;
-    this.searchData(this.apiUrl, state.searchType, state.searchQuery);
+    this.props.searchSwapi();
   }
 
   componentWillReceiveProps(nextProps) {
-    const updatedParams = nextProps.match;
-    if (updatedParams.params.type !== this.props.match.params.type) {
-      this.setState({ loadedItemsCounter: 0 });
+    const { type, query } = this.props.search;
+    if (nextProps.search.type !== type || nextProps.search.query !== query) {
+      this.props.searchSwapi();
     }
-    if (updatedParams.params.query !== this.props.match.params.query) {
-      this.setState({ loadedItemsCounter: 0, totalItemsCounter: 0 });
-    }
-    this.setState({
-      searchType: updatedParams.params.type,
-      searchQuery: updatedParams.params.query,
-      searchResult: {},
-    });
-    const matchParams = this.props.match.params;
-    this.searchData(this.apiUrl, matchParams.type, matchParams.query);
   }
 
   get searchErrorMsg() {
-    return `No ${this.state.searchType} have been found...`;
+    return `No ${this.props.search.type} have been found...`;
   }
 
   get tile() {
-    return this.state.searchResult.results && this.state.searchResult.results.length ?
-      <div>
-        <Tiles
-          onMore={this.state.searchResult.next ? this.loadMoreResults : null}
-          fill
-        >
-          {this.state.searchResult.results.map(item => (
-            <Tile key={item.url}>
-              <Anchor path={{ path: `/people/${item.url.split('/')[5]}`, index: true }}>
-                <Card
-                  thumbnail={imgBg}
-                  heading={item.name}
-                />
-              </Anchor>
-            </Tile>
-          ))}
-        </Tiles>
-        <Box align="center">
-          <Value
-            value={this.state.loadedItemsCounter}
-            size="small"
-            align="start"
-          />
-          <Meter
-            vertical={false}
-            size="small"
-            value={this.state.loadedItemsCounter}
-            max={this.state.totalItemsCounter}
-          />
-        </Box>
-      </div>
-      :
-      <ErrorPage textToDisplay={this.searchErrorMsg} />;
+    const { results, count, fetching } = this.props.searchResults;
+
+    return (
+      <Tiles
+        onMore={ !fetching && results.length < count ? this.props.loadNextResults : null }
+        fill
+      >
+        {results.map(item => (
+          <Tile key={item.url}>
+            <Anchor path={{ path: `/people/${item.url.split('/')[5]}`, index: true }}>
+              <Card
+                thumbnail={imgBg}
+                heading={item.name}
+              />
+            </Anchor>
+          </Tile>
+        ))}
+      </Tiles>
+      )
   }
 
-  searchData(url, type, query) {
-    window.fetch(`${url}/${type}/?search=${query}`)
-      .then(res => res.json())
-      .then(json => this.setState({
-        searchResult: json,
-        loadedItemsCounter: json.results.length,
-        totalItemsCounter: json.count,
-      }));
-  }
+  get meter() {
+    const { type } = this.props.search;
+    const { results, count } = this.props.searchResults;
 
-  loadMoreResults() {
-    window
-      .fetch(`${this.state.searchResult.next}`)
-      .then(res => res.json())
-      .then(json => this.setState({
-        searchResult: {
-          results: this.state.searchResult.results.concat(json.results),
-          next: json.next,
-        },
-        loadedItemsCounter: this.state.loadedItemsCounter + json.results.length,
-      },
-      ));
+    return count ? (
+      <Box align="center">
+        <Value
+          value={results.length}
+          units={type}
+          size="small"
+          align="start"
+        />
+        <Meter
+          vertical={false}
+          size="small"
+          value={results.length}
+          max={count}
+        />
+      </Box>
+    ) : null;
   }
 
   render() {
+    const { count, fetching } = this.props.searchResults;
+
     return (
-      <div>{this.tile}</div>
+      <Section>
+        <Box>
+          { (!count && !fetching) ? <ErrorPage textToDisplay={this.searchErrorMsg}/> : null }
+          { (count && fetching) ? <ErrorPage textToDisplay="Loading..."/> : null }
+          { (count && !fetching) ? this.tile : null }
+        </Box>
+        {this.meter}
+      </Section>
     );
   }
 }
 
-export default Search;
+// Search.propTypes = {
+//   match: PropTypes.shape({
+//     params: PropTypes.object,
+//   }).isRequired,
+// };
+
+function mapStateToProps({ searchResults, search }) {
+  return {
+    search,
+    searchResults,
+  };
+}
+
+function mapDispatchToProps(dispatch) {
+  return {
+    searchSwapi: payload => dispatch(searchSwapi(payload)),
+    loadNextResults: payload => dispatch(loadNextResults(payload)),
+  };
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(Search);

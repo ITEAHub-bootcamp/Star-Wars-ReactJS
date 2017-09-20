@@ -1,9 +1,7 @@
 import React from 'react';
 
 import Section from 'grommet/components/Section';
-import Paragraph from 'grommet/components/Paragraph';
 import Hero from 'grommet/components/Hero';
-import Box from 'grommet/components/Box';
 import Image from 'grommet/components/Image';
 import List from 'grommet/components/List';
 import ListItem from 'grommet/components/ListItem';
@@ -12,7 +10,7 @@ import Tile from 'grommet/components/Tile';
 import Card from 'grommet/components/Card';
 
 import heroBg from './assets/star_wars_bg.jpg';
-
+//TODO update to redux
 class Person extends React.PureComponent {
   constructor(...args) {
     super(...args);
