@@ -1,16 +1,24 @@
+import 'whatwg-fetch';
+
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { AppContainer } from 'react-hot-loader';
+import { Provider } from 'react-redux';
+import configureStore from './store';
 
-import 'whatwg-fetch';
+import { initialStore } from './store/initial-store';
+import App from './components';
 
-import App from './App';
+
+const store = configureStore(initialStore);
 
 function render(Component) {
   ReactDOM.render(
-    <AppContainer>
-      <Component />
-    </AppContainer>,
+    <Provider store={store}>
+      <AppContainer>
+        <Component />
+      </AppContainer>
+    </Provider>,
     document.getElementById('root'),
   );
 }
@@ -18,7 +26,7 @@ function render(Component) {
 render(App);
 
 if (module.hot) {
-  module.hot.accept('./App', () => {
+  module.hot.accept('./components', () => {
     render(App);
   });
 }

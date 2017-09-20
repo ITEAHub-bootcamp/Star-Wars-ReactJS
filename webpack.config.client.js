@@ -16,7 +16,7 @@ module.exports = {
       test: /\.(js|jsx)$/,
       use: [
         'babel-loader',
-        'eslint-loader',
+        // 'eslint-loader',
       ],
       exclude: /node_modules/,
     }, {
@@ -52,7 +52,7 @@ module.exports = {
   ],
   devServer: {
     host: 'localhost',
-    port: 3000,
+    port: 3004,
     publicPath: '/',
     historyApiFallback: true,
     hot: true,
