@@ -92,11 +92,6 @@ class Search extends React.Component {
   }
 }
 
-// Search.propTypes = {
-//   match: PropTypes.shape({
-//     params: PropTypes.object,
-//   }).isRequired,
-// };
 
 function mapStateToProps({ searchResults, search }) {
   return {

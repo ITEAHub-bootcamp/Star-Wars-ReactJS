@@ -1,4 +1,5 @@
 import React from 'react';
+import { connect } from 'react-redux';
 
 import Section from 'grommet/components/Section';
 import Tile from 'grommet/components/Tile';
@@ -11,41 +12,36 @@ import Value from 'grommet/components/Value';
 
 import imgBg from './assets/personBg.jpg';
 
+import { searchSwapi, loadNextResults } from '../../actions/searchResults';
+
 class People extends React.PureComponent {
   constructor(...args) {
     super(...args);
-
-    this.state = {
-      peopleList: [],
-      loadedPeopleCount: 0,
-      totalPeopleCount: 0,
-    };
-    this.apiUrl = 'https://swapi.co/api/people';
     this.loadMoreResults = this.loadMoreResults.bind(this);
   }
 
-  componentWillMount() {
-    window
-      .fetch(`${this.apiUrl}`)
-      .then(res => res.json())
-      .then((json) => {
-        console.log(json, 'js');
-        this.setState({
-          peopleList: json,
-          loadedPeopleCount: json.results.length,
-          totalPeopleCount: json.count,
-        });
-      });
+  componentDidMount() {
+    this.props.updateSearchType('people');
+    this.props.searchSwapi();
+  }
+
+  componentWillReceiveProps(nextProps) {
+    const { query } = this.props.search;
+    if (nextProps.search.query !== query) {
+      this.props.searchSwapi();
+    }
   }
 
   get tile() {
-    return this.state.peopleList.results && this.state.peopleList.results.length ?
+    const { results, count } = this.props.searchResults;
+
+    return results && results.length ?
       <Section>
         <Tiles
           onMore={this.state.peopleList.next ? this.loadMoreResults : null}
           fill
         >
-          {this.state.peopleList.results.map(item => (
+          {results.map(item => (
             <Tile key={item.url}>
               <Anchor path={{ path: `/people/${item.url.split('/')[5]}`, index: true }}>
                 <Card
@@ -58,15 +54,15 @@ class People extends React.PureComponent {
         </Tiles>
         <Box align="center">
           <Value
-            value={this.state.loadedPeopleCount}
+            value={results.length}
             size="small"
             align="start"
           />
           <Meter
             vertical={false}
             size="small"
-            value={this.state.loadedPeopleCount}
-            max={this.state.totalPeopleCount}
+            value={results.length}
+            max={count}
           />
         </Box>
       </Section>
@@ -96,4 +92,19 @@ class People extends React.PureComponent {
   }
 }
 
-export default People;
+
+function mapStateToProps({ searchResults, search }) {
+  return {
+    search,
+    searchResults,
+  };
+}
+
+function mapDispatchToProps(dispatch) {
+  return {
+    searchSwapi: payload => dispatch(searchSwapi(payload)),
+    loadNextResults: payload => dispatch(loadNextResults(payload)),
+  };
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(People);

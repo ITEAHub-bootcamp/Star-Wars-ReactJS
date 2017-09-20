@@ -1,5 +1,4 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import { withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
 
@@ -65,7 +64,6 @@ class SearchHeader extends React.Component {
     const { query } = this.props.search;
     this.props.updateSearchType({ type });
     this.props.history.replace(`/search/${type}/${query || ' '}`);
-    this.props.onResult(type, query || ' ');
   }
 
   getCurrentResourceType() {
@@ -83,7 +81,6 @@ class SearchHeader extends React.Component {
     if (!type) return;
     this.props.updateSearchQuery({ query });
     this.props.history.replace(`/search/${type}/${query || ' '}`);
-    this.props.onResult(type, query || ' ');
   }
 
   render() {
@@ -115,11 +112,6 @@ SearchHeader.propTypes = {
   history: React.PropTypes.shape({
     replace: React.PropTypes.func.isRequired,
   }).isRequired,
-  onResult: PropTypes.func,
-};
-
-SearchHeader.defaultProps = {
-  onResult() {},
 };
 
 function mapStateToProps({ search }) {
